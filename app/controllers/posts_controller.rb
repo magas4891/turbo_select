@@ -3,7 +3,21 @@ class PostsController < ApplicationController
 
   # GET /posts
   def index
-    @posts = Post.all
+    @posts = case params[:sort_by]
+             when 'time_posted_reverse'
+               Post.order(created_at: :desc)
+             when 'alphabetical'
+               Post.order(title: :asc)
+             when 'alphabetical_reverse'
+               Post.order(title: :desc)
+             else
+               Post.order(created_at: :asc)
+             end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   # GET /posts/1
